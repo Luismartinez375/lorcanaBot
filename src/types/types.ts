@@ -1,4 +1,4 @@
-interface Card {
+export interface Card {
     Name: string;
     Cost: number;
     Type: string;
@@ -8,6 +8,9 @@ interface Card {
     Rarity: string;
     Image: string;
     Set_num: number;
+   
+}
+export interface CharacterCard extends Card {
     Classifications: string;
     Strength: number;
     Willpower: number;
