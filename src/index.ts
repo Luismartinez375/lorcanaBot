@@ -1,9 +1,10 @@
+// src/index.ts
 import { config } from 'dotenv';
 import { Client, GatewayIntentBits, Partials, Events } from 'discord.js';
+import { handleInteraction } from './handlers/interactionHandler';
 
-config();
+config(); // Load .env
 
-// Create the client with required intents and partials
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -12,13 +13,16 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.DirectMessages
   ],
-  partials: [Partials.Channel] // Required to receive DMs
+  partials: [Partials.Channel]
 });
 
-// Bot is ready
-client.once(Events.ClientReady, (readyClient) => {
-  console.log(`🧙‍♂️ Archivist Yen Sid is online as ${readyClient.user.tag}`);
+client.once(Events.ClientReady, () => {
+  console.log(`🧙‍♂️ Archivist Yen Sid is online as ${client.user?.tag}`);
 });
 
-// Login with bot token
-client.login(process.env.DISCORD_TOKEN);
+client.on(Events.InteractionCreate, handleInteraction);
+
+// Login to Discord
+client.login(process.env.DISCORD_TOKEN).catch((err) => {
+  console.error('❌ Failed to log in:', err);
+});
