@@ -4,10 +4,10 @@ export interface Card {
     Type: string;
     Color: string;
     Inkable: boolean;
-    Body_text: string;
+    Body_Text: string;
     Rarity: string;
     Image: string;
-    Set_num: number;
+    Set_Num: number;
    
 }
 export interface CharacterCard extends Card {

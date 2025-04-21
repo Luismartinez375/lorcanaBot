@@ -13,7 +13,7 @@ import {
         const inkable = interaction.options.getBoolean('inkable') ?? undefined;
         const inkColor = interaction.options.getString('inkColor') ?? undefined;
         const cost = interaction.options.getNumber('cost') ?? undefined;
-        
+       
         const { characters, others } = await fetchCards({
             Name: name,
             ...(inkable !== undefined && { Inkable: inkable }),
@@ -35,7 +35,7 @@ import {
         options: cards.map((card) => ({
           label: card.Name,
           description: `${card.Color} • ${card.Type} • ${card.Rarity}`,
-          value: JSON.stringify({ Name: card.Name, Set_num: card.Set_num }),
+          value: JSON.stringify({ Name: card.Name, Set_num: card.Set_Num }),
         })),
       };
   
@@ -102,7 +102,7 @@ import {
           options: cards.map((card) => ({
             label: card.Name,
             description: `${card.Color} • ${card.Type} • ${card.Rarity}`,
-            value: JSON.stringify({ Name: card.Name, Set_num: card.Set_num }),
+            value: JSON.stringify({ Name: card.Name, Set_num: card.Set_Num }),
           })),
         };
       
@@ -119,18 +119,20 @@ import {
       
       
   
-    if (interaction.isStringSelectMenu() && interaction.customId === 'card-select') {
-      const selected = JSON.parse(interaction.values[0]);
-      const { characters, others } = await fetchCards(selected);
-      const result = [...characters, ...others][0];
-  
-      if (!result) {
-        await interaction.update({ content: '❌ Could not find the selected card.', components: [] });
-        return;
+      if (interaction.isStringSelectMenu() && interaction.customId === 'card-select') {
+        await interaction.deferUpdate(); // 👈 Defer early!
+      
+        const selected = JSON.parse(interaction.values[0]);
+        const { characters, others } = await fetchCards(selected);
+        const result = [...characters, ...others][0];
+      
+        if (!result) {
+          await interaction.editReply({ content: '❌ Could not find the selected card.', components: [] });
+          return;
+        }
+      
+        const embed = createCardEmbed(result);
+        await interaction.editReply({ content: '', embeds: [embed], components: [] });
       }
-  
-      const embed = createCardEmbed(result);
-      await interaction.update({ content: '', embeds: [embed], components: [] });
-    }
   }
   

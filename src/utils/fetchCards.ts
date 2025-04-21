@@ -5,14 +5,17 @@ import { Card, CharacterCard } from '../types/types';
 const BASE_URL =
   'https://api.lorcana-api.com/cards/fetch?displayonly=classifications;set_num;color;image;cost;inkable;name;type;lore;rarity;body_text;willpower;strength&pagesize=15&page=1';
 
-function buildSearchQuery(filters: Record<string, string | number | boolean>): string {
-  const entries = Object.entries(filters)
-    .filter(([_, v]) => v !== undefined && v !== null)
-    .map(([k, v]) => `${k}=${v}`)
-    .join(';');
-
-  return entries ? `&search=${entries}` : '';
-}
+  function buildSearchQuery(filters: Record<string, string | number | boolean>): string {
+    const entries = Object.entries(filters)
+      .filter(([_, v]) => v !== undefined && v !== null)
+      .map(([k, v]) => {
+        const operator = k === 'Name' ? '~' : '=';
+        return `${k}${operator}${v}`;
+      })
+      .join(';');
+    return entries ? `&search=${entries}` : '';
+  }
+  
 
 export async function fetchCards(
   filters: Record<string, string | number | boolean> = {}
